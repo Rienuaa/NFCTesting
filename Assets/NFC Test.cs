@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using TMPro;
+using UnityEditor.UIElements;
 using UnityEngine;
 public class NFCTest : MonoBehaviour
 {
@@ -16,6 +18,11 @@ public class NFCTest : MonoBehaviour
     void Start()
     {
         tag_output_text.text = "Scan an RFID tag!";
+    }
+
+    void MakeDiscoverable()
+    {
+        tagFound = false;
     }
 
     void Update()
@@ -46,7 +53,7 @@ public class NFCTest : MonoBehaviour
                         {
                             byte[] payLoad = mNdefMessage.Call<byte[]>("getId");
                             string text = System.Convert.ToBase64String(payLoad);
-                            tag_output_text.text += "This is your tag text: " + text;
+                            tag_output_text.text += "This is your tag ID: " + text;
                             tagID = text;
                         }
                         else
@@ -55,6 +62,7 @@ public class NFCTest : MonoBehaviour
                         }
 
                         tagFound = true;
+                        Invoke("MakeDiscoverable", 5);
                         return;
                     }
                     else if (sAction == "android.nfc.action.TAG_DISCOVERED")
@@ -68,7 +76,7 @@ public class NFCTest : MonoBehaviour
                         {
                             byte[] payLoad = mNdefMessage.Call<byte[]>("getId");
                             string text = System.Convert.ToBase64String(payLoad);
-                            tag_output_text.text += "This is your tag text: " + text;
+                            tag_output_text.text += "\nThis is your tag ID: " + text;
                             tagID = text;
                         }
                         else
@@ -76,8 +84,8 @@ public class NFCTest : MonoBehaviour
                             tag_output_text.text = "No ID found !";
                         }
 
-
                         tagFound = true;
+                        Invoke("MakeDiscoverable", 5);
                         return;
                     }
                     else
